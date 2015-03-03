@@ -29,7 +29,7 @@ describe('render()', function() {
         var rendered = render(blocks)
         inspect(rendered)
 
-        rendered.should.be.equal('hello world')
+        rendered.should.contain('hello world')
     })
 
     it('some text with {{foo}}', function() {
@@ -39,7 +39,7 @@ describe('render()', function() {
         var rendered = render(blocks)
         inspect(rendered)
 
-        rendered.should.be.equal('hello world')
+        rendered.should.contain('hello world')
     })
 
     it('some text with {{foo}} and {{bar}}', function() {
@@ -49,7 +49,29 @@ describe('render()', function() {
         var rendered = render(blocks)
         inspect(rendered)
 
-        rendered.should.be.equal('hello world')
+        rendered.should.contain('hello world')
+    })
+
+    it('shopping list', function() {
+
+        var blocks = [code('var list = ["apple","orange","banana"]'),
+            text('My shopping list has {{list.length}} items')
+        ]
+
+        var rendered = render(blocks)
+        inspect(rendered)
+    })
+
+
+    it('barchart', function() {
+
+        var blocks = [code('var list = [50, 20, 30]'),
+            text('This is how income increases over the years'),
+            code('viz.barchart(list)')
+        ]
+
+        var rendered = render(blocks)
+        inspect(rendered)
     })
 
 })

@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+var vizdown = require('../lib/vizdown'),
+    program = require('commander'),
+    fs = require('fs')
+
+program
+    .command('build src')
+    .description('build src into an HTML document')
+    .action(function(src, options) {
+        var text = fs.readFileSync(src, 'utf8')
+        console.log(vizdown(text))
+    })
+
+program.parse(process.argv)

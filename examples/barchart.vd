@@ -1,0 +1,11 @@
+```
+var data = [50, 20, 30, 10]
+```
+
+# Income
+
+Here is how the data looks:
+
+```
+viz.barchart(data)
+```

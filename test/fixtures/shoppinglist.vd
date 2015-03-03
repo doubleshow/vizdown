@@ -1,5 +1,0 @@
-```
-var data = csv.read('shoppinglist.csv')
-```
-
-My shopping list has {{data.length}} items.

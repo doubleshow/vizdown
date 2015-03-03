@@ -1,0 +1,9 @@
+```
+var list = ['apple', 'orange', 'banana']
+```
+
+My shopping list has {{list.length}} items.
+
+```
+viz.list(list)
+```
