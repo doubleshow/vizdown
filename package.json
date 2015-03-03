@@ -1,0 +1,33 @@
+{
+  "name": "vizdown",
+  "version": "1.0.0",
+  "description": "vizdown",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doubleshow/vizdown"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/doubleshow/vizdown/issues"
+  },
+  "homepage": "https://github.com/doubleshow/vizdown",
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "eyes": "^0.1.8"
+  },
+  "dependencies": {
+    "code-context": "^0.4.1",
+    "lodash": "^3.3.1",
+    "marked": "^0.3.3",
+    "with": "^4.0.1"
+  }
+}
