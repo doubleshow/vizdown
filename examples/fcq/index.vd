@@ -28,6 +28,16 @@ There are {{unique_names.length}} unique instructor names. Below are 5 of these 
 viz.list(unique_names.slice(0,5))
 ```
 
+### People We Know
+
+```
+var tom = _.filter(data, { insname1: 'YEH, PEI HSIU'})
+viz.list(tom)
+
+var leysia = _.filter(data, { insname1: 'PALEN, LEYSIA A'})
+viz.list(leysia)
+```
+
 ## Courses
 
 ```
