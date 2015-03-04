@@ -55,4 +55,14 @@ describe('parse()', function() {
         parsed.should.have.length(3)
     })
 
+    it('some code, some text, a jade template', function() {
+
+        var text = '```\n some code \n```\ntext\n```jade\n doctype \n```'
+        var parsed = parse(text)
+        inspect(parsed)
+
+        parsed.should.have.length(3)
+    })
+
+
 })

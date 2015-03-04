@@ -20,6 +20,13 @@ function code(content) {
     }
 }
 
+function jade(content) {
+    return {
+        type: 'jade',
+        content: content
+    }
+}
+
 describe('render()', function() {
 
     it('a single line of text', function() {
@@ -56,6 +63,16 @@ describe('render()', function() {
 
         var blocks = [code('var list = ["apple","orange","banana"]'),
             text('My shopping list has {{list.length}} items')
+        ]
+
+        var rendered = render(blocks)
+        inspect(rendered)
+    })
+
+    it('jade', function() {
+
+        var blocks = [code('var foo = "hello world"'),
+            jade('p= foo')
         ]
 
         var rendered = render(blocks)

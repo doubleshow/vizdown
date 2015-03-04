@@ -63,7 +63,67 @@ var top5 = sorted.reverse().slice(0,5)
 ```
 The highested rated courses are
 
-```
-viz.list(_.map(top5, _.partialRight(_.pick,['CourseTitle', 'AvgCourse','N_ENROLL'])))
+```jade
+table
+    each c, i in top5
+        tr
+            td= i+1
+            td= c.CourseTitle
+            td= c.AvgCourse
+            td= c.N_ENROLL
 ```
 
+## Departments
+
+```
+var depts = _(data)
+            .groupBy('CrsPBADept')
+            .map(function(members, key){                
+                return {
+                    dept: key,
+                    courses: members,
+                }
+            })
+            .each(function(d){
+                d.count = d.courses.length
+            })
+            .each(function(d){
+                d.enrolled = _(d.courses)
+                              .pluck('N_ENROLL')
+                              .map(Number)
+                              .sum()
+                              .value()                             
+            })
+            .value()        
+
+var top5 = _.sortBy(depts, 'enrolled')
+            .reverse()
+            .slice(0,5)
+```
+
+The top five departments in terms of the number of students enrolled in courses are:
+
+```jade
+table
+    tr
+        th Rank
+        th Dept
+        th # of Sections   
+        th # of Students         
+    each d,i in top5
+        tr
+            td= i+1
+            td= d.dept
+            td= d.count
+            td= d.enrolled
+```
+
+```jade
+table
+    tr
+        th Count
+        th Enrolled
+    tr
+        td!= viz.barchart(_.pluck(top5, 'count'))
+        td!= viz.barchart(_.pluck(top5, 'enrolled'))
+```
