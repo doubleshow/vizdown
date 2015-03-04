@@ -2,14 +2,27 @@
 
 var vizdown = require('../lib/vizdown'),
     program = require('commander'),
-    fs = require('fs')
+    fs = require('fs'),
+    open = require('open')
 
 program
     .command('build src')
-    .description('build src into an HTML document')
+    .description('build <src> into an HTML document')
     .action(function(src, options) {
         var text = fs.readFileSync(src, 'utf8')
         console.log(vizdown(text))
     })
+
+program
+    .command('preview src')
+    .description('preview <src> rendered in a web browser')
+    .action(function(src, options) {
+        var text = fs.readFileSync(src, 'utf8')
+        var rendered = vizdown(text)
+        console.log(rendered)
+        var dest = src + '.html'
+        fs.writeFileSync(dest, rendered)
+        open(dest)
+    })    
 
 program.parse(process.argv)
