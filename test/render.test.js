@@ -62,16 +62,19 @@ describe('render()', function() {
         inspect(rendered)
     })
 
+    describe('viz', function() {
+        it('barchart', function() {
 
-    it('barchart', function() {
+            var blocks = [code('var list = [50, 20, 30]'),
+                text('This is how income increases over the years'),
+                code('viz.barchart(list)')
+            ]
 
-        var blocks = [code('var list = [50, 20, 30]'),
-            text('This is how income increases over the years'),
-            code('viz.barchart(list)')
-        ]
-
-        var rendered = render(blocks)
-        inspect(rendered)
+            var rendered = render(blocks)
+            inspect(rendered)
+        })
     })
+
+
 
 })
