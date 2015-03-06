@@ -36,7 +36,7 @@ describe('parse()', function() {
         parsed.should.have.length(0)
     })
 
-    it('some text, some code, some text', function() {
+    it('some text, some code', function() {
 
         var text = 'line 1\n line 2\n line 3\n ```\n some code \n ```'
         var parsed = parse(text)

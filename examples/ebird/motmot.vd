@@ -1,0 +1,42 @@
+```
+load('examples/ebird/ebird1k.txt')
+```
+
+Let's look at what we can learn about Amazonian Motmot.
+
+```
+filterBy('COMMON NAME', 'Amazonian Motmot')
+show()
+```
+
+There are tons of fields. We are only interested in the locations in which these birds are observed and how many were counted during each observation.
+
+```
+select(['COMMON NAME','LOCALITY','OBSERVATION COUNT'])
+show()
+```
+
+Let's group these observations by localtions. The relevant field is _LOCALITY_.
+
+```
+groupBy('LOCALITY')
+show()
+```
+
+We found six observations were made in Pousada EcolÃ´gica Rancho Grande and only one was made in Rio Verde to Porto Velho. 
+
+In each observation, there may be anywhere from one bird or thousands of birds in a flock seen by an observation. Such information is stored in _OBSERVATION_COUNT_. Let's sum up the numbers under the _OBSERVATION_COUNT_ column to find out how many birds in total observed in each location.
+
+```
+sum('OBSERVATION COUNT')
+show()
+```
+
+Finally, we take a total sum to find out in total how many birds were counted across all locations.
+
+```
+sum('sum-observation-count')
+show()
+```
+
+The answer is 15.

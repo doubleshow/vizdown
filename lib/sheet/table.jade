@@ -1,0 +1,24 @@
+mixin mytable(data, level)
+    table
+        - var n = _.keys(data[0]).length
+        tr
+            each key in _.keys(data[0])
+                if (key === 'children')
+                    th
+                else
+                    th= key
+
+        each item in data
+            tr
+                each value, key in item
+                    if (key === 'children')
+                        td
+                            +mytable(value, level + 1)
+                    else                            
+                        td= value            
+
+div(style="overflow:scroll")
+    +mytable(data, 0)
+    table
+        tr
+            td(colspan=n style="color:#999") #{total} rows in total

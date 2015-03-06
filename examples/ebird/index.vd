@@ -1,0 +1,73 @@
+```
+load('examples/ebird/ebird1k.txt')
+//show()
+```
+
+```
+reset()
+sortBy('COMMON NAME')
+select(['COMMON NAME','SCIENTIFIC NAME','LOCALITY'])
+groupBy('COMMON NAME')
+filterBy('COMMON NAME', 'Amazonian Motmot')
+show()
+
+groupBy('LOCALITY')
+groupBy('SCIENTIFIC NAME')
+show()
+```
+
+
+# What are the most common birds?
+
+```
+top('COMMON NAME')
+show()
+```
+
+# What are the most common countries?
+
+```
+reset()
+top('COUNTRY')
+show()
+```
+
+# Who are the top contributors?
+```
+reset()
+top('LAST NAME')
+show()
+```
+
+
+
+
+
+```
+reset()
+top('APPROVED')
+show()
+```
+
+```
+reset()
+select(['COMMON NAME', 'CATEGORY'])
+show()
+```
+
+```
+top('COMMON NAME')
+show()
+```
+
+```
+reset()
+top('CATEGORY')
+show()
+```
+
+```
+reset()
+top('OBSERVATION COUNT')
+show()
+```
