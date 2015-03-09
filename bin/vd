@@ -19,10 +19,10 @@ program
     .action(function(src, options) {
         var text = fs.readFileSync(src, 'utf8')
         var rendered = vizdown(text)
-        console.log(rendered)
+        //console.log(rendered)
         var dest = src + '.html'
         fs.writeFileSync(dest, rendered)
         open(dest)
-    })    
+    })
 
 program.parse(process.argv)

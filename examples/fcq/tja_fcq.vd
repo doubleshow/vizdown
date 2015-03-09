@@ -1,0 +1,70 @@
+# FCQ Data Analysis for 2014
+
+First, we will load the data:
+```
+var data = loader.json('examples/fcq/fcq.2014.json', {multiLines: true})
+var fields = _.keys(data[0]).join(', ')
+```
+
+Now we can begin performing our calculations with the data because they can be accessed as variables within our markdown code.
+
+{{ fields }}
+
+
+#Questions of the FCQ Data
+
+##What is the relationship between total students taught and instructor types?
+```
+var instr_nums=[]
+//console.log(_.keys(instructor_types))
+_.forEach(_.groupBy(data, 'insttl1'), function(data, instructor_type){
+  num_enrolled = _.map(_.compact(_.pluck(data, 'N_ENROLL')), parseFloat)
+  num_graded = _.map(_.compact(_.pluck(data, 'N_GRADE')), parseFloat)
+  instr_nums.push({'Instructor Type':instructor_type, 'Number Enrolled': _.sum(num_enrolled), 'Number Graded': _.sum(num_graded)})
+})
+viz.table(instr_nums)
+```
+
+
+##What is the correlation between average course rating and work load hours?
+```
+var workload_hours = []
+_.forEach(_.groupBy(data, 'Workload_Hrs_Wk'), function(data, hours){
+  course_rating = _.map(_.compact(_.pluck(data, 'AvgCourse')), parseFloat)
+  workload_hours.push({'Hours per Week':hours, 'Average Course Ratings': (_.sum(course_rating)/course_rating.length).toFixed(2)})
+})
+
+viz.table(workload_hours)
+```
+
+
+
+
+
+
+
+
+
+##What is the average grade given by each department?
+```
+dept_grades = []
+
+_.forEach(_.groupBy(data, 'CrsPBADept'), function(data, dept){
+  grades = _.map(_.compact(_.pluck(data, 'AVG_GRD')), parseFloat)
+  dept_grades.push({'Department':dept, 'Average Grade': (_.sum(grades) / grades.length).toFixed(2)})
+})
+
+viz.table(dept_grades)
+```
+
+
+
+
+
+
+
+##Create a Linechart to show the average course rating of all courses over 2009 - 2014.
+```
+//grouped_by_year = _.groupBy(data, 'YearTerm')
+//ratings_by_year = _.compact(_.pluck(data, 'AvgCourse'))
+```
