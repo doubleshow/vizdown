@@ -1,0 +1,16 @@
+unless grid
+  table
+    each val,key in data[0]
+      th #{key}
+    each d in data
+      tr
+        each val,key in d
+          td #{val}
+else
+  div.row.table-header
+    each val,key in data[0]
+      div.col-md-1 #{key}
+  each d in data
+    div.row
+      each val,key in d
+        div.col-md-1 #{val}

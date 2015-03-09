@@ -1,0 +1,5 @@
+include ./axis.jade
+
+svg(width=width, height=max_height+50)
+  each d in data
+    circle(cx=d.x, cy=d.y, r=d.r, stroke="black", stroke-width="3", fill="red")

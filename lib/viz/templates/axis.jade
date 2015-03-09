@@ -1,0 +1,44 @@
+//----------------------------------|
+//- JADE AXIS TEMPLATE              |
+//-                                 |
+//- Builds Axis & Sets Variables    |
+//-                                 |
+//- Expecting 'y' values            |
+//----------------------------------|
+
+
+//- Use the data[x].y attribute to find the max height
+//- http://stackoverflow.com/questions/16013625/return-maximum-value-from-an-associative-array-object
+- var max_height = height || Math.max.apply(null, Object.keys(data).map(function(e){return data[e].y}))
+- var y_origin   = max_height+25
+- var x_origin   = 25
+- var maj_tick_size   = maj_tick_size || Math.floor( (max_height/5) )
+- var min_tick_size   = min_tick_size || Math.floor( (max_height/10) )
+
+//- Build the Axis
+mixin axis(x_origin, y_origin, maj_tick_size, min_tick_size)
+  - var y_ticker = y_origin
+  line(x1=x_origin, y1=y_origin, x2=x_origin, y2=0, stroke="black", stroke-width=1)
+
+  while y_ticker >= 0
+    if ( (y_ticker+y_origin) % min_tick_size == 0)
+      if ( (y_ticker+y_origin) % maj_tick_size == 0)
+        line(x1=x_origin-10, x2=x_origin, y1=y_ticker, y2=y_ticker, stroke="black", stroke-width=1)
+        text(x=x_origin-25, y=y_ticker) #{y_origin - y_ticker}
+      else
+        line(y1=y_ticker, y2=y_ticker, x1=x_origin-5, x2=x_origin, , stroke="black", stroke-width=1)
+    -y_ticker -= 1
+
+  line(x1=x_origin, y1=y_origin, x2=width, y2=y_origin, stroke="black", stroke-width=1)
+
+mixin x_ticks(x_origin, y_origin, maj_tick_size, min_tick_size)
+  -var x_ticker = x_origin
+
+  while x_ticker <= width
+    if ( (x_ticker-x_origin) % min_tick_size == 0)
+      if ( (x_ticker-x_origin) % maj_tick_size == 0)
+        line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+10, stroke="black", stroke-width=1)
+        text(x=x_ticker, y=y_origin+20) #{x_ticker-x_origin}
+      else
+        line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+5, stroke="black", stroke-width=1)
+    -x_ticker += 1
