@@ -9,58 +9,57 @@ var fields = _.keys(data[0]).join(', ')
 
 ##What is the relationship between total students taught and instructor types?
 ```
-var instr_nums=[]
-//console.log(_.keys(instructor_types))
-_.forEach(_.groupBy(data, 'insttl1'), function(data, instructor_type){
-  num_enrolled = _.map(_.compact(_.pluck(data, 'N_ENROLL')), parseFloat)
-  num_graded = _.map(_.compact(_.pluck(data, 'N_GRADE')), parseFloat)
-  instr_nums.push({'Instructor Type':instructor_type, 'Number Enrolled': _.sum(num_enrolled), 'Number Graded': _.sum(num_graded)})
-})
-viz.table(instr_nums)
+viz.table(correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'N_ENROLL', y_label: "Total Number Enrolled",
+   op: 'sum', sort: 'Total Number Enrolled'
+  }))
 ```
 
 
 ##What is the correlation between average course rating and work load hours?
 ```
-var workload_hours = []
-_.forEach(_.groupBy(data, 'Workload_Hrs_Wk'), function(data, hours){
-  course_rating = _.map(_.compact(_.pluck(data, 'AvgCourse')), parseFloat)
-  workload_hours.push({'Hours per Week':hours, 'Average Course Ratings': (_.sum(course_rating)/course_rating.length).toFixed(2)})
-})
+var rating_x_workload = correlationship(data,
+  {x: 'Workload_Hrs_Wk', x_label: "Hours Per Week",
+   y: 'AvgCourse', y_label: "Average Course Rating",
+   op: 'average', sort: 'Hours Per Week', sortType: 'num'
+  })
 
-viz.table(workload_hours)
+var heights=[]
+var labels= []
+rating_x_workload.forEach(function(data){
+  heights.push(data['Average Course Rating'])
+  labels.push(data['Hours Per Week'])
+})
+viz.barchart(heights, {labels:labels})
 ```
 
 ##What is the relationship between grades and instructor types?
 ```
-var grades=[]
-_.forEach(_.groupBy(data, 'insttl1'), function(data, instructor_type){
-  these_grades = _.map(_.compact(_.pluck(data, 'AVG_GRD')), parseFloat)
-  grades.push({'Instructor Type':instructor_type, 'Average Grade': (_.sum(these_grades)/these_grades.length).toFixed(2)})
-})
-viz.table(grades)
+viz.table(correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Instructor Type"
+  }))
 ```
 
 ##What is the correlation between course number (levels) and grades?
 ```
-var levels = []
-_.forEach(_.groupBy(data, 'CrsLvlNum'), function(data, lvl){
-  this_lvl = _.map(_.compact(_.pluck(data, 'AVG_GRD')), parseFloat)
-  levels.push({'Course Level':lvl, 'Average Grade': (_.sum(this_lvl)/this_lvl.length).toFixed(2)})
-})
-viz.table(levels)
+viz.table(correlationship(data,
+  {x: 'CrsLvlNum', x_label: "Course Level",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Course Level"
+  }))
 ```
+
 
 ##What is the average grade given by each department?
 ```
-dept_grades = []
-
-_.forEach(_.groupBy(data, 'CrsPBADept'), function(data, dept){
-  grades = _.map(_.compact(_.pluck(data, 'AVG_GRD')), parseFloat)
-  dept_grades.push({'Department':dept, 'Average Grade': (_.sum(grades) / grades.length).toFixed(2)})
-})
-
-viz.table(dept_grades)
+viz.table(correlationship(data,
+  {x: 'CrsPBADept', x_label: "Department",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Department", reverse: false
+  }))
 ```
 
 ##What is the correlation between course rating and grades?
@@ -71,8 +70,28 @@ console.log('unimplemented')
 
 ##What is the distribution of different instructor types?
 ```
-console.log('unimplemented')
+var instructors_type_sums = correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'N_ENROLL', y_label: "Total Number Enrolled",
+   op: 'sum', sort: 'Total Number Enrolled', reverse: true
+  })
+
+var instructor_types = ['INSTRUCTOR', 'PROFESSOR', 'LECTURER', 'ASSOCIATE PROFESSOR',
+  'ASST PROFESSOR', 'SENIOR INSTRUCTOR', 'GRAD PART-TIME INSTRUCTOR', 'TEACHING ASSISTANT',
+  'PROFESSIONAL RESEARCH ASST','INSTRUCTOR ADJUNCT','RESEARCH ASSOCIATE']
+
+var heights=[]
+var labels= []
+instructors_type_sums.forEach(function(data){
+  if (instructor_types.indexOf(data['Instructor Type']) > 0){
+    heights.push(data['Total Number Enrolled'])
+    labels.push(data['Instructor Type'])
+  }
+})
+viz.barchart(heights, {labels:labels})
+
 ```
+
 
 ##Create a Linechart to show the average course rating of all courses over 2009 - 2014.
 ```
@@ -86,4 +105,17 @@ console.log('unimplemented')
 
 ##Create a scatterplot to show the relationship between average course rating and number of students enrolled
 ```
-console.log('unimplemented')
+var students_v_grade = correlationship(data,
+  {x: 'N_ENROLL', x_label: "Number Enrolled",
+   y: 'AvgCourse', y_label: "Average Course Rating",
+   op: 'average', sort: 'Number Enrolled', reverse: false
+  })
+
+to_scatter = _.map(students_v_grade, function(data){
+  if (!isNaN(parseFloat(data['Average Course Rating']))){
+    return [parseInt(data['Number Enrolled']), 20*parseFloat(data['Average Course Rating'])]
+  }
+})
+
+viz.scatterplot(_.compact(to_scatter), {})
+```
