@@ -106,11 +106,11 @@ var course_ratings_v_grades = _.sortBy(_.reject(correlationship(data,
   {x: 'AVG_GRD', y: 'AvgCourse', op: 'average'}),function(n){
     return isNaN(n['AvgCourse'])
   }
-),parseFloat('AVG_GRD'))
+),function(n){ return parseFloat(n['AVG_GRD'])})
 
 var scatter_data = [ _.collect(course_ratings_v_grades, 'AVG_GRD'), _.collect(course_ratings_v_grades, 'AvgCourse')]
 
-viz.scatterplot(scatter_data, {width: 500, height: 200, y_label: "Average Course Rating", min_tick: 0.1, maj_tick: 1, x_min_tick: 0.1, x_maj_tick: 0.5, text_rotation: 0, padding_b: 100})
+viz.scatterplot(scatter_data, {width: 500, height: 200, y_label: "Average Course Rating", min_tick: 0.1, maj_tick: 1, x_min_tick: 0.1, x_maj_tick: 0.5, text_rotation: 0, padding_b: 100, padding_r: 100})
 ```
 
 ##What is the distribution of different instructor types?
@@ -159,4 +159,5 @@ students_v_grades = _.sortBy(_.reject(students_v_grade, function(n){return isNaN
 
 viz.scatterplot([ _.collect(students_v_grades, 'Number Enrolled'), _.collect(students_v_grades, 'Average Course Rating')],
   {width: 500, height: 200, y_label: "Average Course Rating", x_label: "Number of Enrolled Students", min_tick: 0.1, maj_tick: 1, x_min_tick: 5, x_maj_tick: 20, text_rotation: 45, padding_b: 100})
+
 ```

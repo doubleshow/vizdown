@@ -10,7 +10,7 @@
 
 //- Size of Frame
 - var height          = chart_height + padding_t // (Padding for the top)
-- var width           = chart_width
+- var width           = chart_width + 75
 
 //- Find the max_y value for the data (Using the .y attribute, which MUST exist)
 - var max_y           = Math.max.apply(null, Object.keys(data).map(function(e){return data[e].y}))
@@ -37,7 +37,7 @@ mixin axis
 
   while y_ticker >= 0
 
-    if ( ( (y_origin - y_ticker) % Math.floor((num_minor_ticks*min_tick_size)*y_scale)) == 0)
+    if ( ( (y_origin - y_ticker) - Math.floor((num_minor_ticks*min_tick_size)*y_scale)) == 0)
       line(y1=y_ticker, y2=y_ticker, x1=x_origin-5, x2=x_origin, , stroke="black", stroke-width=1)
       - num_minor_ticks += 1
 
@@ -46,7 +46,7 @@ mixin axis
         line(x1=x_origin-10, x2=x_origin, y1=y_ticker, y2=y_ticker, stroke="black", stroke-width=1)
         text(x=x_origin-40, y=y_ticker) 0
 
-      else if ( ( (y_origin - y_ticker) % Math.floor((num_major_ticks*maj_tick_size)*y_scale) ) == 0)
+      else if ( ( (y_origin - y_ticker) - Math.floor((num_major_ticks*maj_tick_size)*y_scale) ) == 0)
         line(x1=x_origin-10, x2=x_origin, y1=y_ticker, y2=y_ticker, stroke="black", stroke-width=1)
         text(x=x_origin-40, y=y_ticker) #{num_major_ticks*maj_tick_size}
         - num_major_ticks += 1
@@ -67,11 +67,11 @@ mixin x_axis(min, maj, rotation)
 
   while x_ticker <= width+x_origin+20
 
-    if ( ( (x_ticker-x_origin) % Math.floor(min*x_scale)) == 0)
+    if ( ( (x_ticker-x_origin) - Math.floor(num_minor_ticks*min*x_scale)) == 0)
       line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+5, stroke="black", stroke-width=1)
       - num_minor_ticks += 1
 
-    if ( ( (x_ticker-x_origin) % Math.floor(maj*x_scale) ) == 0)
+    if ( ( (x_ticker-x_origin) - Math.floor(num_major_ticks*maj*x_scale) ) == 0)
       line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+10, stroke="black", stroke-width=1)
       text(x=x_ticker-5, y=y_origin+25, transform="rotate(#{rotation}, #{x_ticker}, #{y_origin+20})") #{num_major_ticks*maj}
 
