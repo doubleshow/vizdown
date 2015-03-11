@@ -31,6 +31,10 @@
   "dependencies": {
     "code-context": "^0.4.1",
     "commander": "^2.6.0",
+    "csv": "^0.4.1",
+    "csv-parse": "0.0.9",
+    "csvrow": "^0.1.0",
+    "fast-csv": "^0.5.7",
     "github-markdown-css": "^2.0.5",
     "jade": "^1.9.2",
     "lodash": "^3.3.1",

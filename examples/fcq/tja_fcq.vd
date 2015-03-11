@@ -110,7 +110,7 @@ var course_ratings_v_grades = _.sortBy(_.reject(correlationship(data,
 
 var scatter_data = [ _.collect(course_ratings_v_grades, 'AVG_GRD'), _.collect(course_ratings_v_grades, 'AvgCourse')]
 
-viz.scatterplot(scatter_data, {width: 500, height: 200, y_label: "Average Course Rating", min_tick: 0.1, maj_tick: 1, x_min_tick: 0.1, x_maj_tick: 0.5, text_rotation: 0, padding_b: 100, padding_r: 100})
+viz.scatterplot(scatter_data, {width: 500, height: 200, y_label: "Average Course Rating", x_label: "Average Grade", min_tick: 0.1, maj_tick: 1, x_min_tick: 0.1, x_maj_tick: 0.5, text_rotation: 0, padding_b: 100, padding_r: 100})
 ```
 
 ##What is the distribution of different instructor types?
@@ -140,7 +140,15 @@ viz.barchart(heights, {width: 950, height: 400, min_tick: 10, maj_tick: 50,
 
 ##Create a Linechart to show the average course rating of all courses over 2009 - 2014.
 ```
-console.log('unimplemented')
+var multi_year_data = loader.csv('./examples/fcq/fcq_all.csv', {})
+
+ratings_per_year = _.reject(correlationship(multi_year_data,
+  {x: 'Yearterm', x_label: "Year Term",
+   y: 'CourseOverall', y_label: "Average Course Rating",
+   op: 'average', sort: 'Yearterm', reverse: false
+  }),function(n){return isNaN(n['Average Course Rating'])})
+
+viz.table(ratings_per_year)
 ```
 
 ##Create a barchart to show the total number of students taught by instructors?
