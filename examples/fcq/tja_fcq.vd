@@ -148,8 +148,14 @@ ratings_per_year = _.reject(correlationship(multi_year_data,
    op: 'average', sort: 'Yearterm', reverse: false
   }),function(n){return isNaN(n['Average Course Rating'])})
 
-viz.table(ratings_per_year)
+//viz.table(ratings_per_year)
+
+var to_linegraph = [ _.range(ratings_per_year.length), _.collect(ratings_per_year, 'Average Course Rating')]
+
+viz.linegraph(to_linegraph, {y_label: "Average Course Rating", x_label: "Year / Term", min_tick: 0.1, maj_tick: 1,
+custom_x:["2009F", "2010W","2010S","2010F","2011W","2011S","2011F","2012W","2012S","2012F","2013W"], text_rotation: 45, padding_b: 80, padding_r: 50})
 ```
+
 
 ##Create a barchart to show the total number of students taught by instructors?
 ```

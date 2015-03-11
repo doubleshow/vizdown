@@ -79,6 +79,16 @@ mixin x_axis(min, maj, rotation)
 
     -x_ticker += 1
 
+mixin custom_x_ticks(ticks)
+
+  - var x_ticker = x_origin
+
+  each label in ticks, index
+    text(x=x_ticker-10, y=y_origin+25, transform="rotate(#{rotation}, #{x_ticker}, #{y_origin+20})") #{label}
+    - x_ticker += x_scale
+
+
+
 mixin y_label(label)
   text(x=-height/3 y=-40 transform="rotate(-90, 80, 20)" ) #{label}
 

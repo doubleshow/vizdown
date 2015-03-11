@@ -1,14 +1,10 @@
 include ./axis.jade
 
-//- Add The title
-h3 #{title}
+svg(width=width+padding_r, height=height+padding_b)
 
-//-Include the Axis
-
-svg(width=width, height=max_height+50)
-
-  +axis(x_origin, y_origin, maj_tick_size, min_tick_size)
-  +x_ticks(x_origin, y_origin, 50,10)
+  +axis
+  if custom_x
+    +custom_x_ticks(custom_x)
 
   //-Put the data in
   -for (var i = 0; i < data.length; i++)
