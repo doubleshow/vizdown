@@ -1,10 +1,8 @@
 include ./axis.jade
 
-h3 #{title}
+svg(width=width+padding_r, height=height+padding_b)
 
-svg(width=width, height=100+50)
-
-  +axis(x_origin, y_origin, 25, 5)
+  +axis(maj_tick, min_tick)
 
   each d, index in data
     //- Create The bar
@@ -13,7 +11,9 @@ svg(width=width, height=100+50)
         - d.color = "red"
       else
         - d.color = "blue"
-    rect(width=d.w, height=d.y, x=x_origin+(index*padding), y=y_origin-d.y, fill=d.color)
+    rect(width=d.w, height=d.y, x=x_origin+15+(index*padding), y=y_origin-d.y, fill=d.color)
 
     //- Add an x label
-    text(x=x_origin + d.w/2+index*padding y=y_origin+20 color=blue) #{d.x}
+    text(x=x_origin+d.w/2+(index*padding) y=y_origin+20, transform="rotate(#{text_rotation}, #{x_origin+d.w/2+(index*padding)}, #{y_origin+20})" ) #{d.x}
+
+  +y_label(y_label_text)

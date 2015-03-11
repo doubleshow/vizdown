@@ -1,13 +1,13 @@
 //-Include the Axis
 include ./axis.jade
 
-//- Add The title
-h3 #{title}
+svg(width=width+padding_r, height=height+padding_b)
 
-svg(width=width, height=max_height+50)
-
-  +axis(x_origin, y_origin, 15, 30)
-  +x_ticks(x_origin, y_origin, 10,20)
+  +axis
+  +x_axis(x_min, x_maj, rotation)
 
   each d in data
     circle(cx=x_origin+d.x, cy=y_origin-d.y, r=2, stroke="black", stroke-width="1", fill="red")
+
+  +y_label(y_label_text)
+  +x_label(x_label_text)
