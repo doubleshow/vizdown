@@ -141,6 +141,7 @@ viz.barchart(heights, {width: 950, height: 400, min_tick: 10, maj_tick: 50,
 ##Create a Linechart to show the average course rating of all courses over 2009 - 2014.
 ```
 var multi_year_data = loader.csv('./examples/fcq/fcq_all.csv', {})
+var terms = ["2009F", "2010W","2010S","2010F","2011W","2011S","2011F","2012W","2012S","2012F","2013W"]
 
 ratings_per_year = _.reject(correlationship(multi_year_data,
   {x: 'Yearterm', x_label: "Year Term",
@@ -156,10 +157,19 @@ viz.linegraph(to_linegraph, {y_label: "Average Course Rating", x_label: "Year / 
 custom_x:["2009F", "2010W","2010S","2010F","2011W","2011S","2011F","2012W","2012S","2012F","2013W"], text_rotation: 45, padding_b: 80, padding_r: 50})
 ```
 
-
-##Create a barchart to show the total number of students taught by instructors?
+##Create a barchart to show the total number of students taught by instructors between 2009 and 2013
 ```
-console.log('unimplemented')
+students_taught_per_term = correlationship(multi_year_data,
+  {x: 'Yearterm', x_label: "Year Term",
+   y: 'FormsRequested', y_label: "Students In Courses",
+   op: 'sum', sort: 'Yearterm', reverse: false
+  })
+
+colors = ["blue","red","green","blue","red","green","blue","red","green","blue","red","green"]
+
+instructors_barchart = _.reject(_.collect(students_taught_per_term, 'Students In Courses'), function(n){return parseFloat(n) < 1})
+
+viz.barchart(instructors_barchart,{labels: terms, height: 300, width: 900, y_label: "Number of Students", colors: colors, min_tick: 10000, maj_tick: 50000})
 ```
 
 ##Create a scatterplot to show the relationship between average course rating and number of students enrolled
