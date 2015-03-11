@@ -1,0 +1,10 @@
+FCQ Data Analysis for 2014
+==========================
+_First, load the 2014 FCQ Data as the "data" variable_
+```
+var all_data = loader.csv('./examples/fcq/fcq_all.csv', {})
+var fields = _.keys(data[0]).join(', ')
+
+console.log(data[0])
+```
+{{fields}}
