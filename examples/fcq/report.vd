@@ -61,6 +61,7 @@ We can find some correlation or relation on data. Let's check them out.
 Let's see correlation among some properties of FCQ data.
 
 ```
+var validData = _.filter(data, 'AvgCourse');
 var dataset = {}
 var properties = [ 'AvgCourse', 'AVG_GRD', 'N_ENROLL', 'Workload_Raw'
                  , 'CrsLvlNum'
@@ -68,12 +69,12 @@ var properties = [ 'AvgCourse', 'AVG_GRD', 'N_ENROLL', 'Workload_Raw'
 
 for (var i = 0; i < properties.length; i++) {
   if (properties[i] === 'CrsLvlNum') {
-    temp = _.pluck(data, properties[i]);
+    temp = _.pluck(validData, properties[i]);
     dataset[properties[i]] = _.map(temp, function(text) {
                                return Number(text.slice(0, 1));
                              })
   } else {
-    dataset[properties[i]] = _.pluck(data, properties[i]).map(Number);
+    dataset[properties[i]] = _.pluck(validData, properties[i]).map(Number);
   }
 }
 
