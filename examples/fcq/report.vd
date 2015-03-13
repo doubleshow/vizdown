@@ -53,3 +53,38 @@ var arrayWorkload_Raw = _.pluck(itemsHavingAvgCourse, 'Workload_Raw');
 
 * min: {{_.min(arrayWorkload_Raw)}}
 * max: {{_.max(arrayWorkload_Raw)}}
+
+## Relationship
+We can find some correlation or relation on data. Let's check them out.
+
+### Correlation
+Let's see correlation among some properties of FCQ data.
+
+```
+var dataset = {}
+var properties = [ 'AvgCourse', 'AVG_GRD', 'N_ENROLL', 'Workload_Raw'
+                 , 'CrsLvlNum'
+                 ]
+
+for (var i = 0; i < properties.length; i++) {
+  if (properties[i] === 'CrsLvlNum') {
+    temp = _.pluck(data, properties[i]);
+    dataset[properties[i]] = _.map(temp, function(text) {
+                               return Number(text.slice(0, 1));
+                             })
+  } else {
+    dataset[properties[i]] = _.pluck(data, properties[i]).map(Number);
+  }
+}
+
+var corrAvgCourseN_ENROLL = corr(dataset, 'AvgCourse', 'N_ENROLL');
+var corrAvgCourseAVG_GRD = corr(dataset, 'AvgCourse', 'AVG_GRD');
+var corrAvgCourseWorkload_Raw = corr(dataset, 'AvgCourse', 'Workload_Raw');
+var corrCrsLvlNumAVG_GRD = corr(dataset, 'CrsLvlNum', 'AVG_GRD');
+```
+* Average course rating and Number of students enrolled: {{corrAvgCourseN_ENROLL.toFixed(3)}}
+* Average course rating and Average grade: {{corrAvgCourseAVG_GRD.toFixed(3)}}
+* Average course rating and Workload hours: {{corrAvgCourseWorkload_Raw.toFixed(3)}}
+* Course level number and Average grade: {{corrCrsLvlNumAVG_GRD.toFixed(3)}}
+
+The result shows that if you want to get better grade, you might want to take higher course level.
