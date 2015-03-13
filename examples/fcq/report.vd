@@ -129,6 +129,12 @@ var instructorTypes = _(validData)
                                       .map(Number)
                                       .sum()
                                       .value() / d.courses.length;
+                        d.numInst = _(d.courses)
+                                     .pluck('insname1')
+                                     .unique()
+                                     .compact()
+                                     .value()
+                                     .length
                       })
                       .value();
 
@@ -175,6 +181,26 @@ table
       td= d.totEnrolled
       td= d.avgEnrolled
       td= d.avgGrade
+```
+### Distribution of different instructor types
+Additionally, let's see the distribution of different instructor types.
+
+```
+var top10ByNumInst = _.sortBy(instructorTypes, 'numInst')
+                      .reverse()
+                      .slice(0, 10)
+```
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th # of This Type Instructors
+  each d, i in top10ByNumInst
+    tr
+      td= i+1
+      td= d.instType
+      td= d.numInst
 ```
 
 ## Others
