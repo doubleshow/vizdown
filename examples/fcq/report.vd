@@ -1,0 +1,55 @@
+# Analysing FCQ Data
+
+Here is the data set for FCQ. You can get FCQ data from [FCQ](http://www.colorado.edu/fcq/).
+```
+var data = loader.json('examples/fcq/fcq.2014.json', {multiLines: true})
+var fields = _.keys(data[0]).join(', ')
+```
+
+## Exploring lodash
+[lodash](https://lodash.com) is A JavaScript utility libray to manipulate data. Let's do it.
+
+Prepare two data set.
+```
+var arrayAvgCourse1 = _.pluck(data, 'AvgCourse');
+var arrayN_ENROLL1 = _.pluck(data, 'N_ENROLL');
+```
+
+Show scope of each data.
+```
+var maxAvgCourse = _.max(arrayAvgCourse1);
+var minAvgCourse = _.min(arrayAvgCourse1);
+var maxN_ENROLL = _.max(arrayN_ENROLL1);
+var minN_ENROLL = _.min(arrayN_ENROLL1);
+```
+
+* AvgCourse ({{arrayAvgCourse1.length}} items): {{minAvgCourse}}, {{maxAvgCourse}}
+* N_ENROLL ({{arrayN_ENROLL1.length}} items): {{minN_ENROLL}}, {{maxN_ENROLL}}
+
+Now, you realized that some items have no AvgCourse value. We don't need to care about it. So, just delete those items. We can check `undefined` with `_.isNaN(undefined);`.
+
+Prepare two data set once more by filtering `NaN` values and show range for each.
+```
+var itemsHavingAvgCourse = _.filter(data, 'AvgCourse');
+var arrayAvgCourse = _.pluck(itemsHavingAvgCourse, 'AvgCourse');
+var arrayN_ENROLL = _.pluck(itemsHavingAvgCourse, 'N_ENROLL');
+
+var maxAvgCourse = _.max(arrayAvgCourse);
+var minAvgCourse = _.min(arrayAvgCourse);
+var maxN_ENROLL = _.max(arrayN_ENROLL);
+var minN_ENROLL = _.min(arrayN_ENROLL);
+```
+
+* AvgCourse ({{arrayAvgCourse.length}} items): {{minAvgCourse}}, {{maxAvgCourse}}
+* N_ENROLL ({{arrayN_ENROLL.length}} items): {{minN_ENROLL}}, {{maxN_ENROLL}}
+
+Yes, {{Math.abs(arrayAvgCourse.length - arrayAvgCourse1.length)}} items were removed because they didn't have correct values for `AvgCourse`.
+
+What about `Workload_Raw`?
+
+```
+var arrayWorkload_Raw = _.pluck(itemsHavingAvgCourse, 'Workload_Raw');
+```
+
+* min: {{_.min(arrayWorkload_Raw)}}
+* max: {{_.max(arrayWorkload_Raw)}}
