@@ -89,3 +89,20 @@ var corrCrsLvlNumAVG_GRD = corr(dataset, 'CrsLvlNum', 'AVG_GRD');
 * Course level number and Average grade: {{corrCrsLvlNumAVG_GRD.toFixed(3)}}
 
 The result shows that if you want to get better grade, you might want to take higher course level.
+
+### Instructor types
+Let's talk about other relationships also.
+
+* What about the relationship between total students taught and instructor types?
+* What is the relationship between grades and instructor types?
+
+In this case, we might need to know what kind of instructor types are exists in FCQ. Let's check it out.
+```
+// We only care about first instructor now
+var insttl1 = _.compact(_.pluck(validData, 'insttl1'));
+var uniqueInsructors = _.unique(insttl1);
+```
+There has {{uniqueInsructors.length}} instructor types. Let's just see 5 types.
+```
+viz.list(uniqueInsructors.slice(0,5));
+```
