@@ -106,3 +106,73 @@ There has {{uniqueInsructors.length}} instructor types. Let's just see 5 types.
 ```
 viz.list(uniqueInsructors.slice(0,5));
 ```
+
+```
+var instructorTypes = _(validData)
+                      .groupBy('insttl1')
+                      .map(function(members, key) {
+                        return { instType: key, courses: members };
+                      })
+                      .each(function(d) {
+                        d.totEnrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value();
+                        d.avgEnrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value() / d.courses.length;
+                        d.avgGrade = _(d.courses)
+                                      .pluck('AVG_GRD')
+                                      .map(Number)
+                                      .sum()
+                                      .value() / d.courses.length;
+                      })
+                      .value();
+
+var top5ByAvgGrade = _.sortBy(instructorTypes, 'avgGrade')
+                      .reverse()
+                      .slice(0, 5)
+
+var top5ByEnrolled = _.sortBy(instructorTypes, 'totEnrolled')
+                      .reverse()
+                      .slice(0, 5)
+```
+Let's see the result. Here is Top5 by average grade.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th Average Grade
+    th Total # of Students
+    th Average # of Students
+  each d, i in top5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+      td= d.totEnrolled
+      td= d.avgEnrolled
+```
+And, here is Top5 by number of students.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th Total # of Students
+    th Average # of Students
+    th Average Grade
+  each d, i in top5ByEnrolled
+    tr
+      td= i+1
+      td= d.instType
+      td= d.totEnrolled
+      td= d.avgEnrolled
+      td= d.avgGrade
+```
