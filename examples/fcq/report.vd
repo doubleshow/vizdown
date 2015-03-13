@@ -258,3 +258,41 @@ table
       td= d.avgGrade
 ```
 Yes, now we know where should I enroll. Computer Science~ What? :)
+
+### Total number of student taught by instructors.
+Do you know who is the best instructor in terms of total number of student taught by him or her?
+
+```
+var instructorTypes = _(validData)
+                      .groupBy('insname1')
+                      .map(function(members, key) {
+                        return { instName: key, courses: members };
+                      })
+                      .each(function(d) {
+                        d.enrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value();
+                      })
+                      .value();
+
+var top15ByEnrolled = _.sortBy(instructorTypes, 'enrolled')
+                      .reverse()
+                      .slice(0, 15)
+
+```
+Let's see the result. Here is Top 15 instructors.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Name
+    th # of Students
+  each d, i in top15ByEnrolled
+    tr
+      td= i+1
+      td= d.instName
+      td= d.enrolled
+```
