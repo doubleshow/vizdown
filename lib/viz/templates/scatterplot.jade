@@ -1,3 +1,5 @@
-svg(width="500", height="100")
-  each val, i in data
-    circle(cx=val[0]+20, cy=val[1]+20, r=2)
+svg(width=gw, height=gh)
+  g(transform="translate(0," + gh + ")")
+    g(transform="scale(1,-1)")
+      each val, i in data
+        circle(cx=xs*(val[0]-xlow), cy=ys*(val[1]-ylow), r=cr, fill=cc)

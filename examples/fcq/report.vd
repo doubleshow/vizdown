@@ -90,6 +90,21 @@ var corrCrsLvlNumAVG_GRD = corr(dataset, 'CrsLvlNum', 'AVG_GRD');
 
 The result shows that if you want to get better grade, you might want to take higher course level.
 
+Wait, we might want to plot a scatterplot for relationship between average course rating and number of student enrolled.
+```
+options = { cr: 1.5
+          , cc: 'rgb(229, 149, 70)'
+          , graphWidth: 700
+          , graphHeight: 500
+          , xRange: [0.0, _.max(dataset.N_ENROLL)]
+          , yRange: [_.min(dataset.AvgCourse), _.max(dataset.AvgCourse)]
+          //, yRange: [0, _.max(dataset.AvgCourse)]
+          }
+
+viz.scatterplot(_.zip(dataset.N_ENROLL, dataset.AvgCourse), options);
+```
+I already knew correlation for average course rating and Number of students enrolled, **{{corrAvgCourseN_ENROLL.toFixed(3)}}**. Do you think this this plot is correct or not? I think it is correct!
+
 ### Instructor types
 Let's talk about other relationships also.
 
@@ -234,7 +249,7 @@ Let's see the result. Here is Top 5 by average grade.
 ```jade
 table
   tr
-    th Rank
+    th Rankuldjs.github.io/
     th Department
     th Average Grade
   each d, i in top5ByAvgGrade
@@ -302,7 +317,7 @@ Here we can see bar chart for this data.
 var options = {
     title: 'Number of student taught by instructors',
     highlight: 0,
-    color: 'rgb(119, 155, 157)',
+    color: 'rgb(147, 170, 100)',
     graphWidth: 400,
     graphHeight: 300,
     barWidth: 25,
