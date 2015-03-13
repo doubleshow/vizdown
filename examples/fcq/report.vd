@@ -296,3 +296,18 @@ table
       td= d.instName
       td= d.enrolled
 ```
+Here we can see bar chart for this data.
+
+```
+var options = {
+    title: 'Number of student taught by instructors',
+    highlight: 0,
+    color: 'rgb(119, 155, 157)',
+    graphWidth: 400,
+    graphHeight: 300,
+    barWidth: 25,
+    barMargin: 1,
+    normalize: 300
+}
+viz.barchart(_.pluck(top15ByEnrolled, 'enrolled'), options);
+```
