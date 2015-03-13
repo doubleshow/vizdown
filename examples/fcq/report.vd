@@ -176,3 +176,59 @@ table
       td= d.avgEnrolled
       td= d.avgGrade
 ```
+
+## Others
+### Generous deparments in terms of average grade
+I am now curious that if I want to get better grade, which department might be good to me?
+
+Let's check average grade by each department.
+```
+var departments = _(validData)
+                   .groupBy('CrsPBADept')
+                   .map(function(members, key) {
+                     return { instType: key, courses: members };
+                   })
+                   .each(function(d) {
+                     d.avgGrade = _(d.courses)
+                                   .pluck('AVG_GRD')
+                                   .map(Number)
+                                   .sum()
+                                   .value() / d.courses.length;
+                   })
+                   .value();
+
+var top5ByAvgGrade = _.sortBy(departments, 'avgGrade')
+                      .reverse()
+                      .slice(0, 5)
+var worst5ByAvgGrade = _.sortBy(departments, 'avgGrade')
+                      .slice(0, 5)
+```
+Let's see the result. Here is Top 5 by average grade.
+
+```jade
+table
+  tr
+    th Rank
+    th Department
+    th Average Grade
+  each d, i in top5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+```
+And, here is Worst 5 by average grade.
+
+```jade
+table
+  tr
+    th Rank
+    th Department
+    th Average Grade
+  each d, i in worst5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+```
+Yes, now we know where should I enroll. Computer Science~ What? :)
