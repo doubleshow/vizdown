@@ -1,4 +1,19 @@
-svg.chart(width="420", height="120")
-    each d, i in data        
-        g(transform="translate(0," + i * 20 + ")")
-            rect(width=d,height="19")
+include ./axis.jade
+
+svg(width=width+padding_r, height=height+padding_b)
+
+  +axis
+
+  each d, index in data
+    //- Create The bar
+    unless d.color
+      if (index%2==0)
+        - d.color = "red"
+      else
+        - d.color = "blue"
+    rect(width=d.w, height=d.y, x=x_origin+15+(index*padding), y=y_origin-d.y, fill=d.color)
+
+    //- Add an x label
+    text(x=x_origin+d.w/2+(index*padding) y=y_origin+20, transform="rotate(#{text_rotation}, #{x_origin+d.w/2+(index*padding)}, #{y_origin+20})" ) #{d.x}
+
+  +y_label(y_label_text)

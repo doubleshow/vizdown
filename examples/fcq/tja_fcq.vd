@@ -1,0 +1,187 @@
+FCQ Data Analysis for 2014
+==========================
+_First, load the 2014 FCQ Data as the "data" variable_
+```
+var data = loader.json('examples/fcq/fcq.2014.json', {multiLines: true})
+var fields = _.keys(data[0]).join(', ')
+```
+
+#Questions of the FCQ Data
+
+##What is the relationship between total students taught and instructor types?
+```
+var students_per_instructor_type = correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'N_ENROLL', y_label: "Total Number Enrolled",
+   op: 'sum', sort: 'Total Number Enrolled'
+  })
+// Remove Instructor Types with less than 100 Students (noisy data)
+var interested_instructors = _.reject(students_per_instructor_type, function(n){
+  return n["Total Number Enrolled"] < 100
+})
+viz.table(interested_instructors)
+```
+
+
+##What is the correlation between average course rating and work load hours?
+```
+var rating_x_workload = correlationship(data,
+  {x: 'Workload_Hrs_Wk', x_label: "Hours Per Week",
+   y: 'AvgCourse', y_label: "Average Course Rating",
+   op: 'average', sort: 'Hours Per Week', sortType: 'num'
+  })
+
+var heights=[]
+var labels= []
+rating_x_workload.forEach(function(data){
+  heights.push(data['Average Course Rating'])
+  labels.push(data['Hours Per Week'])
+})
+viz.barchart(heights, {labels:labels, y_label: 'Course Rating', width: 600, height: 200, maj_tick: 1, min_tick: 0.2})
+```
+
+##What is the relationship between grades and instructor types?
+```
+var instructor_types_v_grades = correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Instructor Type"
+  })
+
+var valid_instructors = _.map(interested_instructors, function(x){
+  return x["Instructor Type"]
+  })
+
+viz.table(_.sortBy(_.reject(instructor_types_v_grades, function(n){
+  return valid_instructors.indexOf(n["Instructor Type"]) < 0
+}), "Average Grade"))
+```
+
+##What is the correlation between course number (levels) and grades?
+```
+var course_level_v_grades = correlationship(data,
+  {x: 'CrsLvlNum', x_label: "Course Level",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Course Level"
+  })
+heights = []
+labels  = []
+colors = ['red', 'red', 'red', 'red', 'blue', 'blue', 'blue','blue']
+course_level_v_grades.forEach(function(data){
+  heights.push(data["Average Grade"])
+  labels.push(data["Course Level"])
+})
+viz.barchart(heights, {labels: labels, colors: colors, y_label: "Average Grade", maj_tick: 0.5, min_tick: 0.1})
+```
+
+
+##What is the average grade given by each department?
+```
+//Get the data desired from the correlationship function
+var grades_by_dept = correlationship(data,
+  {x: 'CrsPBADept', x_label: "Department",
+   y: 'AVG_GRD', y_label: "Average Grade",
+   op: 'average', sort: "Department", reverse: false
+  })
+
+//Group it by Grades to 1 decimal point
+var fewerDigits = _.groupBy(grades_by_dept, function(data){
+  return parseFloat(data["Average Grade"]).toFixed(1)
+})
+
+//Prepare to present the data in a nicer manner
+var for_table = []
+_.forEach(_.keys(fewerDigits), function(key){
+  depts = (_.map(fewerDigits[key], function(n){
+      return n["Department"]
+    })).sort().join(", ")
+  for_table.push({"Average Grade":key, "Departments":depts})
+})
+viz.table(_.sortBy(for_table, "Average Grade"))
+```
+
+##What is the correlation between course rating and grades?
+```
+var course_ratings_v_grades = _.sortBy(_.reject(correlationship(data,
+  {x: 'AVG_GRD', y: 'AvgCourse', op: 'average'}),function(n){
+    return isNaN(n['AvgCourse'])
+  }
+),function(n){ return parseFloat(n['AVG_GRD'])})
+
+var scatter_data = [ _.collect(course_ratings_v_grades, 'AVG_GRD'), _.collect(course_ratings_v_grades, 'AvgCourse')]
+
+viz.scatterplot(scatter_data, {width: 500, height: 200, y_label: "Average Course Rating", x_label: "Average Grade", min_tick: 0.1, maj_tick: 1, x_min_tick: 0.1, x_maj_tick: 0.5, text_rotation: 0, padding_b: 100, padding_r: 100})
+```
+
+##What is the distribution of different instructor types?
+```
+var instructors_type_sums = correlationship(data,
+  {x: 'insttl1', x_label: "Instructor Type",
+   y: 'insname1', y_label: "Number of Instructors",
+   op: 'count', sort: 'Number of Instructors', reverse: true
+  })
+
+var instructor_types = ['INSTRUCTOR', 'PROFESSOR', 'LECTURER', 'ASSOCIATE PROFESSOR',
+  'ASST PROFESSOR', 'SENIOR INSTRUCTOR', 'GRAD PART-TIME INSTRUCTOR', 'TEACHING ASSISTANT',
+  'PROFESSIONAL RESEARCH ASST','INSTRUCTOR ADJUNCT','RESEARCH ASSOCIATE']
+
+var heights=[]
+var labels= []
+instructors_type_sums.forEach(function(data){
+  if (instructor_types.indexOf(data['Instructor Type']) >= 0){
+    heights.push(data['Number of Instructors'])
+    labels.push(data['Instructor Type'])
+  }
+})
+viz.barchart(heights, {width: 950, height: 400, min_tick: 10, maj_tick: 50,
+  labels:labels, text_rotation: 45, y_label: "Number of Faculty", padding_b: 250, padding_r: 175})
+```
+
+
+##Create a Linechart to show the average course rating of all courses over 2009 - 2014.
+```
+var multi_year_data = loader.csv('./examples/fcq/fcq_all.csv', {})
+var terms = ["2009F", "2010W","2010S","2010F","2011W","2011S","2011F","2012W","2012S","2012F","2013W"]
+
+ratings_per_year = _.reject(correlationship(multi_year_data,
+  {x: 'Yearterm', x_label: "Year Term",
+   y: 'CourseOverall', y_label: "Average Course Rating",
+   op: 'average', sort: 'Yearterm', reverse: false
+  }),function(n){return isNaN(n['Average Course Rating'])})
+
+//viz.table(ratings_per_year)
+
+var to_linegraph = [ _.range(ratings_per_year.length), _.collect(ratings_per_year, 'Average Course Rating')]
+
+viz.linegraph(to_linegraph, {y_label: "Average Course Rating", x_label: "Year / Term", min_tick: 0.1, maj_tick: 1,
+custom_x:["2009F", "2010W","2010S","2010F","2011W","2011S","2011F","2012W","2012S","2012F","2013W"], text_rotation: 45, padding_b: 80, padding_r: 50})
+```
+
+##Create a barchart to show the total number of students taught by instructors between 2009 and 2013
+```
+students_taught_per_term = correlationship(multi_year_data,
+  {x: 'Yearterm', x_label: "Year Term",
+   y: 'FormsRequested', y_label: "Students In Courses",
+   op: 'sum', sort: 'Yearterm', reverse: false
+  })
+
+colors = ["blue","red","green","blue","red","green","blue","red","green","blue","red","green"]
+
+instructors_barchart = _.reject(_.collect(students_taught_per_term, 'Students In Courses'), function(n){return parseFloat(n) < 1})
+
+viz.barchart(instructors_barchart,{labels: terms, height: 300, width: 900, y_label: "Number of Students", colors: colors, min_tick: 10000, maj_tick: 50000})
+```
+
+##Create a scatterplot to show the relationship between average course rating and number of students enrolled
+```
+var students_v_grade = correlationship(data,
+  {x: 'N_ENROLL', x_label: "Number Enrolled",
+   y: 'AvgCourse', y_label: "Average Course Rating",
+   op: 'average', sort: 'Number Enrolled', reverse: false
+  })
+students_v_grades = _.sortBy(_.reject(students_v_grade, function(n){return isNaN(n["Average Course Rating"])}), function(n){return parseFloat(n['Number Enrolled'])})
+
+viz.scatterplot([ _.collect(students_v_grades, 'Number Enrolled'), _.collect(students_v_grades, 'Average Course Rating')],
+  {width: 500, height: 200, y_label: "Average Course Rating", x_label: "Number of Enrolled Students", min_tick: 0.1, maj_tick: 1, x_min_tick: 5, x_maj_tick: 20, text_rotation: 45, padding_b: 100})
+
+```

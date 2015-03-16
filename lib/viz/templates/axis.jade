@@ -1,0 +1,91 @@
+//----------------------------------|
+//- JADE AXIS TEMPLATE              |
+//-                                 |
+//- Builds Axis & Sets Variables    |
+//- for later use                   |
+//- Expecting 'y' values            |
+//----------------------------------|
+
+- var padding_t       = 25
+
+//- Size of Frame
+- var height          = chart_height + padding_t // (Padding for the top)
+- var width           = chart_width + 75
+
+//- Find the max_y value for the data (Using the .y attribute, which MUST exist)
+- var max_y           = Math.max.apply(null, Object.keys(data).map(function(e){return data[e].y}))
+- var y_origin        = height + padding_t
+- var x_origin        = 75
+
+//- Default Tick sizes -- should be pretty
+- var maj_tick_size   = maj_tick  || Math.floor( (max_y/10) )
+- var min_tick_size   = min_tick  || Math.floor( (max_y/50) )
+
+//- Functions to build axis:
+mixin axis
+
+  //- Build Axis
+  - var y_ticker = y_origin
+  line(x1=x_origin, y1=y_origin, x2=x_origin, y2=0, stroke="black", stroke-width=1)
+
+  //= console.log("Y-Scaler: "+y_scale)
+  //= console.log("Min tick size: " + min_tick_size)
+  //= console.log("Maj tick size: " + maj_tick_size)
+
+  - var num_major_ticks = 0
+  - var num_minor_ticks = 0
+
+  while y_ticker >= 0
+
+    if ( ( (y_origin - y_ticker) - Math.floor((num_minor_ticks*min_tick_size)*y_scale)) == 0)
+      line(y1=y_ticker, y2=y_ticker, x1=x_origin-5, x2=x_origin, , stroke="black", stroke-width=1)
+      - num_minor_ticks += 1
+
+    if ( ( (y_origin - y_ticker) - Math.floor((num_major_ticks*maj_tick_size)*y_scale) ) == 0)
+      line(x1=x_origin-10, x2=x_origin, y1=y_ticker, y2=y_ticker, stroke="black", stroke-width=1)
+      text(x=x_origin-40, y=y_ticker) #{num_major_ticks*maj_tick_size}
+      - num_major_ticks += 1
+
+    -y_ticker -= 1
+
+  line(x1=x_origin, y1=y_origin, x2=x_origin+width, y2=y_origin, stroke="black", stroke-width=1)
+
+mixin x_axis(min, maj, rotation)
+
+  - var x_ticker = x_origin
+
+  //- console.log("X-Scaler: "+x_scale)
+  //- console.log("Min tick size: " + min)
+  //- console.log("Maj tick size: " + maj)
+
+  - var num_major_ticks = 0
+  - var num_minor_ticks = 0
+
+  while x_ticker <= width+x_origin+20
+
+    if ( ( (x_ticker-x_origin) - Math.floor(num_minor_ticks*min*x_scale)) == 0)
+      line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+5, stroke="black", stroke-width=1)
+      - num_minor_ticks += 1
+
+    if ( ( (x_ticker-x_origin) - Math.floor(num_major_ticks*maj*x_scale) ) == 0)
+      line(x1=x_ticker, x2=x_ticker, y1=y_origin, y2=y_origin+10, stroke="black", stroke-width=1)
+      text(x=x_ticker-5, y=y_origin+25, transform="rotate(#{rotation}, #{x_ticker}, #{y_origin+20})") #{num_major_ticks*maj}
+
+      - num_major_ticks += 1
+
+    -x_ticker += 1
+
+mixin custom_x_ticks(ticks)
+
+  - var x_ticker = x_origin
+
+  each label in ticks, index
+    text(x=x_ticker-10, y=y_origin+25, transform="rotate(#{rotation}, #{x_ticker}, #{y_origin+20})") #{label}
+    - x_ticker += x_scale
+
+
+mixin y_label(label)
+  text(x=-height/3 y=-40 transform="rotate(-90, 80, 20)" ) #{label}
+
+mixin x_label(label)
+  text(x=width/3 y=y_origin+70) #{label}

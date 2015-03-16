@@ -1,0 +1,19 @@
+include ./axis.jade
+
+svg(width=width+padding_r, height=height+padding_b)
+
+  +axis
+  if custom_x
+    +custom_x_ticks(custom_x)
+
+  //-Put the data in
+  -for (var i = 0; i < data.length; i++)
+    //- If thre should be a line, draw the line first
+    if (i < data.length-1)
+      - var p1 = data[i]
+      - var p2 = data[i+1]
+      line(x1=x_origin+p1.x, y1=y_origin-p1.y, x2=x_origin+p2.x, y2=y_origin-p2.y, stroke=line_color, stroke-width=line_width)
+
+    //- Now draw the point
+    - var p1 = data[i]
+    circle(cx=x_origin+p1.x, cy=y_origin-p1.y, r=p1.r, stroke="black", stroke-width="1", fill=p1.color)
