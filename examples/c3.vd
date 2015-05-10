@@ -41,3 +41,23 @@ c3.generate({
   }
 })
 ```
+Get data from REST APIs and plot it. (It will take at least 20 seconds)
+```c3
+var museAPI = "http://sangheestyle.com:8080/muse/count?callback=?"
+
+getJSON(museAPI).c3.generate({
+  data: {
+    x: 'date',
+    json: response.result,
+    keys: {value: ['date', 'count']}
+  },
+  axis: {
+    x: {
+        type: 'timeseries',
+        tick: {
+          format: '%Y-%m-%d'
+        }
+    }
+  }
+})
+```
