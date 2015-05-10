@@ -61,3 +61,49 @@ getJSON(museAPI).c3.generate({
   }
 })
 ```
+You can load csv file and plot data with scatter plot.
+```c3
+var chart = c3.generate({
+    data: {
+        xs: {
+            watchers: 'forks',
+        },
+        url: 'rel_watchers_forks.csv',
+        type: 'scatter'
+    },
+    axis: {
+        x: {
+            label: 'watchers count',
+            tick: {
+                fit: false
+            }
+        },
+        y: {
+            label: 'forks count'
+        }
+    },
+});
+```
+One more!
+```c3
+var chart = c3.generate({
+  data: {
+      xs: {
+          watchers: 'size',
+      },
+      url: 'rel_watchers_size.csv',
+      type: 'scatter'
+  },
+  axis: {
+      x: {
+          label: 'watchers count',
+          tick: {
+              fit: false
+          }
+      },
+      y: {
+          label: 'repo size'
+      }
+  },
+});
+```
