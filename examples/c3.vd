@@ -70,16 +70,25 @@ getJSON(museAPI).c3.generate({
     json: response.result,
     keys: {value: ['date', 'count']}
   },
-  axis: {
-    x: {
-        type: 'timeseries',
-        tick: {
-          format: '%Y-%m-%d'
-        }
-    }
+  axis : {
+    x : {
+      type : 'timeseries',
+      tick : {
+        format : "%Y-%m-%d"
+      },
+      label: 'date'
+      },
+      y: {
+          label: 'number of created repo'
+      }
+  },
+  zoom: {
+          enabled: true
   }
-})
+});
 ```
+You can zoom in and out thanks to `zoom` option. Just use your mouse.
+
 ## Loading data from a CSV file.
 You can load csv file for plot.
 
