@@ -1,3 +1,12 @@
+You can define style for this page.
+```style
+min-width: 200px;
+max-width: 650px;
+margin: 0 auto;
+padding: 30px;
+```
+
+Let's get started!
 ```
 var data = [['x', '2013-01-01', '2013-01-02'],
             ['data1', 30, 200]]
