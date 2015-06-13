@@ -1,0 +1,19 @@
+unless grid
+  table
+    thead
+      tr
+        each row, i in header
+          th= row
+    tbody
+      each row, i in data
+        tr
+          each item, i in row
+            td= item
+else
+  div.row.table-header
+    each row, i in header
+      div.col-md-1 #{row}
+  each row, i in data
+    div.row
+      each item, i in row
+        div.col-md-1 #{item}

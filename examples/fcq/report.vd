@@ -1,0 +1,328 @@
+# Analysing FCQ Data
+
+Here is the data set for FCQ. You can get FCQ data from [FCQ](http://www.colorado.edu/fcq/).
+```
+var data = loader.json('examples/fcq/fcq.2014.json', {multiLines: true})
+var fields = _.keys(data[0]).join(', ')
+```
+
+## Exploring lodash
+[lodash](https://lodash.com) is A JavaScript utility libray to manipulate data. Let's do it.
+
+Prepare two data set.
+```
+var arrayAvgCourse1 = _.pluck(data, 'AvgCourse');
+var arrayN_ENROLL1 = _.pluck(data, 'N_ENROLL');
+```
+
+Show scope of each data.
+```
+var maxAvgCourse = _.max(arrayAvgCourse1);
+var minAvgCourse = _.min(arrayAvgCourse1);
+var maxN_ENROLL = _.max(arrayN_ENROLL1);
+var minN_ENROLL = _.min(arrayN_ENROLL1);
+```
+
+* AvgCourse ({{arrayAvgCourse1.length}} items): {{minAvgCourse}}, {{maxAvgCourse}}
+* N_ENROLL ({{arrayN_ENROLL1.length}} items): {{minN_ENROLL}}, {{maxN_ENROLL}}
+
+Now, you realized that some items have no AvgCourse value. We don't need to care about it. So, just delete those items. We can check `undefined` with `_.isNaN(undefined);`.
+
+Prepare two data set once more by filtering `NaN` values and show range for each.
+```
+var itemsHavingAvgCourse = _.filter(data, 'AvgCourse');
+var arrayAvgCourse = _.pluck(itemsHavingAvgCourse, 'AvgCourse');
+var arrayN_ENROLL = _.pluck(itemsHavingAvgCourse, 'N_ENROLL');
+
+var maxAvgCourse = _.max(arrayAvgCourse);
+var minAvgCourse = _.min(arrayAvgCourse);
+var maxN_ENROLL = _.max(arrayN_ENROLL);
+var minN_ENROLL = _.min(arrayN_ENROLL);
+```
+
+* AvgCourse ({{arrayAvgCourse.length}} items): {{minAvgCourse}}, {{maxAvgCourse}}
+* N_ENROLL ({{arrayN_ENROLL.length}} items): {{minN_ENROLL}}, {{maxN_ENROLL}}
+
+Yes, {{Math.abs(arrayAvgCourse.length - arrayAvgCourse1.length)}} items were removed because they didn't have correct values for `AvgCourse`.
+
+What about `Workload_Raw`?
+
+```
+var arrayWorkload_Raw = _.pluck(itemsHavingAvgCourse, 'Workload_Raw');
+```
+
+* min: {{_.min(arrayWorkload_Raw)}}
+* max: {{_.max(arrayWorkload_Raw)}}
+
+## Relationship
+We can find some correlation or relation on data. Let's check them out.
+
+### Correlation
+Let's see correlation among some properties of FCQ data.
+
+```
+var validData = _.filter(data, 'AvgCourse');
+var dataset = {}
+var properties = [ 'AvgCourse', 'AVG_GRD', 'N_ENROLL', 'Workload_Raw'
+                 , 'CrsLvlNum'
+                 ]
+
+for (var i = 0; i < properties.length; i++) {
+  if (properties[i] === 'CrsLvlNum') {
+    temp = _.pluck(validData, properties[i]);
+    dataset[properties[i]] = _.map(temp, function(text) {
+                               return Number(text.slice(0, 1));
+                             })
+  } else {
+    dataset[properties[i]] = _.pluck(validData, properties[i]).map(Number);
+  }
+}
+
+var corrAvgCourseN_ENROLL = corr(dataset, 'AvgCourse', 'N_ENROLL');
+var corrAvgCourseAVG_GRD = corr(dataset, 'AvgCourse', 'AVG_GRD');
+var corrAvgCourseWorkload_Raw = corr(dataset, 'AvgCourse', 'Workload_Raw');
+var corrCrsLvlNumAVG_GRD = corr(dataset, 'CrsLvlNum', 'AVG_GRD');
+```
+* Average course rating and Number of students enrolled: {{corrAvgCourseN_ENROLL.toFixed(3)}}
+* Average course rating and Average grade: {{corrAvgCourseAVG_GRD.toFixed(3)}}
+* Average course rating and Workload hours: {{corrAvgCourseWorkload_Raw.toFixed(3)}}
+* Course level number and Average grade: {{corrCrsLvlNumAVG_GRD.toFixed(3)}}
+
+The result shows that if you want to get better grade, you might want to take higher course level.
+
+Wait, we might want to plot a scatterplot for relationship between average course rating and number of student enrolled.
+```
+options = { cr: 1.5
+          , cc: 'rgb(229, 149, 70)'
+          , graphWidth: 700
+          , graphHeight: 500
+          , xRange: [0.0, _.max(dataset.N_ENROLL)]
+          , yRange: [_.min(dataset.AvgCourse), _.max(dataset.AvgCourse)]
+          //, yRange: [0, _.max(dataset.AvgCourse)]
+          }
+
+viz.scatterplot(_.zip(dataset.N_ENROLL, dataset.AvgCourse), options);
+```
+I already knew correlation for average course rating and Number of students enrolled, **{{corrAvgCourseN_ENROLL.toFixed(3)}}**. Do you think this this plot is correct or not? I think it is correct!
+
+### Instructor types
+Let's talk about other relationships also.
+
+* What about the relationship between total students taught and instructor types?
+* What is the relationship between grades and instructor types?
+
+In this case, we might need to know what kind of instructor types are exists in FCQ. Let's check it out.
+```
+// We only care about first instructor now
+var insttl1 = _.compact(_.pluck(validData, 'insttl1'));
+var uniqueInsructors = _.unique(insttl1);
+```
+There has {{uniqueInsructors.length}} instructor types. Let's just see 5 types.
+```
+viz.list(uniqueInsructors.slice(0,5));
+```
+
+```
+var instructorTypes = _(validData)
+                      .groupBy('insttl1')
+                      .map(function(members, key) {
+                        return { instType: key, courses: members };
+                      })
+                      .each(function(d) {
+                        d.totEnrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value();
+                        d.avgEnrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value() / d.courses.length;
+                        d.avgGrade = _(d.courses)
+                                      .pluck('AVG_GRD')
+                                      .map(Number)
+                                      .sum()
+                                      .value() / d.courses.length;
+                        d.numInst = _(d.courses)
+                                     .pluck('insname1')
+                                     .unique()
+                                     .compact()
+                                     .value()
+                                     .length
+                      })
+                      .value();
+
+var top5ByAvgGrade = _.sortBy(instructorTypes, 'avgGrade')
+                      .reverse()
+                      .slice(0, 5)
+
+var top5ByEnrolled = _.sortBy(instructorTypes, 'totEnrolled')
+                      .reverse()
+                      .slice(0, 5)
+```
+Let's see the result. Here is Top5 by average grade.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th Average Grade
+    th Total # of Students
+    th Average # of Students
+  each d, i in top5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+      td= d.totEnrolled
+      td= d.avgEnrolled
+```
+And, here is Top5 by number of students.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th Total # of Students
+    th Average # of Students
+    th Average Grade
+  each d, i in top5ByEnrolled
+    tr
+      td= i+1
+      td= d.instType
+      td= d.totEnrolled
+      td= d.avgEnrolled
+      td= d.avgGrade
+```
+### Distribution of different instructor types
+Additionally, let's see the distribution of different instructor types.
+
+```
+var top10ByNumInst = _.sortBy(instructorTypes, 'numInst')
+                      .reverse()
+                      .slice(0, 10)
+```
+```jade
+table
+  tr
+    th Rank
+    th Instructor Type
+    th # of This Type Instructors
+  each d, i in top10ByNumInst
+    tr
+      td= i+1
+      td= d.instType
+      td= d.numInst
+```
+
+## Others
+### Generous deparments in terms of average grade
+I am now curious that if I want to get better grade, which department might be good to me?
+
+Let's check average grade by each department.
+```
+var departments = _(validData)
+                   .groupBy('CrsPBADept')
+                   .map(function(members, key) {
+                     return { instType: key, courses: members };
+                   })
+                   .each(function(d) {
+                     d.avgGrade = _(d.courses)
+                                   .pluck('AVG_GRD')
+                                   .map(Number)
+                                   .sum()
+                                   .value() / d.courses.length;
+                   })
+                   .value();
+
+var top5ByAvgGrade = _.sortBy(departments, 'avgGrade')
+                      .reverse()
+                      .slice(0, 5)
+var worst5ByAvgGrade = _.sortBy(departments, 'avgGrade')
+                      .slice(0, 5)
+```
+Let's see the result. Here is Top 5 by average grade.
+
+```jade
+table
+  tr
+    th Rankuldjs.github.io/
+    th Department
+    th Average Grade
+  each d, i in top5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+```
+And, here is Worst 5 by average grade.
+
+```jade
+table
+  tr
+    th Rank
+    th Department
+    th Average Grade
+  each d, i in worst5ByAvgGrade
+    tr
+      td= i+1
+      td= d.instType
+      td= d.avgGrade
+```
+Yes, now we know where should I enroll. Computer Science~ What? :)
+
+### Total number of student taught by instructors.
+Do you know who is the best instructor in terms of total number of student taught by him or her?
+
+```
+var instructorTypes = _(validData)
+                      .groupBy('insname1')
+                      .map(function(members, key) {
+                        return { instName: key, courses: members };
+                      })
+                      .each(function(d) {
+                        d.enrolled = _(d.courses)
+                                      .pluck('N_ENROLL')
+                                      .map(Number)
+                                      .sum()
+                                      .value();
+                      })
+                      .value();
+
+var top15ByEnrolled = _.sortBy(instructorTypes, 'enrolled')
+                      .reverse()
+                      .slice(0, 15)
+
+```
+Let's see the result. Here is Top 15 instructors.
+
+```jade
+table
+  tr
+    th Rank
+    th Instructor Name
+    th # of Students
+  each d, i in top15ByEnrolled
+    tr
+      td= i+1
+      td= d.instName
+      td= d.enrolled
+```
+Here we can see bar chart for this data.
+
+```
+var options = {
+    title: 'Number of student taught by instructors',
+    highlight: 0,
+    color: 'rgb(147, 170, 100)',
+    graphWidth: 400,
+    graphHeight: 300,
+    barWidth: 25,
+    barMargin: 1,
+    normalize: 300
+}
+viz.barchart(_.pluck(top15ByEnrolled, 'enrolled'), options);
+```

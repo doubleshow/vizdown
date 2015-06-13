@@ -1,4 +1,32 @@
-svg.chart(width="420", height="120")
-    each d, i in data        
-        g(transform="translate(0," + i * 20 + ")")
-            rect(width=d,height="19")
+svg(width=gw, height=gh)
+  g(transform="translate(0," + gh * 0.9 + ")")
+    g(transform="scale(1,-1)")
+      each val, i in data
+        unless highlight
+          unless a
+            rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="1.0")
+          else
+            if i % 2 === 0
+              rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="1.0")
+            else
+              rect(width=w, height=val, x=(w*i)+(i*m), fill=a, opacity="1.0")
+        else
+          unless a
+            if i === highlight
+              rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="1.0")
+            else
+              rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="0.3")
+          else
+            if i % 2 === 0
+              if i === highlight
+                rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="1.0")
+              else
+                rect(width=w, height=val, x=(w*i)+(i*m), fill=c, opacity="0.3")
+            else
+              if i === highlight
+                rect(width=w, height=val, x=(w*i)+(i*m), fill=a, opacity="1.0")
+              else
+                rect(width=w, height=val, x=(w*i)+(i*m), fill=a, opacity="0.3")
+
+text(x="0", y="40", fill="red")
+  | #{title}

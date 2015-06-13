@@ -1,0 +1,6 @@
+svg(width="500", height="100")
+  each val, i in data
+    circle(cx=(i+1)*10 cy=val r=radius[i])
+    if i === 0
+    else
+      line(x1=i*10 y1=data[i-1] x2=(i+1)*10 y2=data[i] style="stroke:#{color};stroke-width:2")
